@@ -1,0 +1,27 @@
+# specify working vars
+stime="$(date +"%Y-%m-%d_%H-%M-%S")"
+tmpdir="/tmp"
+bkdir="/docker"
+loc="google:/backup"
+archive="$tmpdir/docker.$stime.tar.gz"
+
+echo "current time is $time"
+echo "start making tar archive"
+
+# make archive
+sudo tar cvzf $archive $bkdir
+ls -l $tmpdir
+
+#set finish time
+ftime="$(date +"%Y-%m-%d_%H-%M-%S")"
+echo "finised archive at $ftime"
+
+# upload to cloud with rclone
+sudo rclone copy $archive $loc -L -vv -u --config="rclone.conf" --log-file BKSH.gd.rclone.$ftime.log -P
+
+echo "finished upload at $(date +"%Y-%m-%d_%H-%M-%S")"
+echo "weather it failded or not"
+echo "deleting archive file"
+
+#remove archive file
+sudo rm $archive
